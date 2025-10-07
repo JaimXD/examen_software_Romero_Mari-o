@@ -1,6 +1,6 @@
 ﻿namespace examen_software_Romero_Mariño;
 
-internal class Program
+public class Program
 {
     static void Main(string[] args)
     {
