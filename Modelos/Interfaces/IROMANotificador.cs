@@ -8,8 +8,5 @@ namespace examen_software_Romero_Mariño.Modelos.Interfaces;
 
 public interface IROMANotificador
 {
-    public interface IROMANotificador
-    {
-        void ROMAEnviarNotificacion(string usuario, string mensaje);
-    }
+    void ROMAEnviarNotificacion(string usuario, string mensaje);
 }

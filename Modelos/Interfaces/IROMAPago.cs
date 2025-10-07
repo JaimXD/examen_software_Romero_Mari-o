@@ -8,9 +8,5 @@ namespace examen_software_Romero_Mariño.Modelos.Interfaces;
 
 public interface IROMAPago
 {
-    public interface IROMAPago
-    {
-        void ROMAProcesarPago(decimal monto, string usuario);
-    }
-
+    bool ROMAProcesarPago(decimal monto, string usuario);
 }
