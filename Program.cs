@@ -1,7 +1,6 @@
-﻿using examen_software_Romero_Mariño.Modelos.Implementaciones.Pagos;
-using examen_software_Romero_Mariño.Modelos.Implementaciones.Notificadores;
-using examen_software_Romero_Mariño.Modelos.Interfaces;
-using examen_software_Romero_Mariño.Servicios;
+﻿using examen_software_Romero_Mariño.Models.Implementations.Payments;
+using examen_software_Romero_Mariño.Models.Implementations.Notifiers;
+using examen_software_Romero_Mariño.Services;
 
 namespace examen_software_Romero_Mariño;
 
@@ -9,59 +8,50 @@ public class Program
 {
     static void Main(string[] args)
     {
-        Console.WriteLine("🏪 SISTEMA DE PROCESAMIENTO DE PAGOS ROMA 🏪");
+        Console.WriteLine("SISTEMA DE PROCESAMIENTO DE PAGOS ROMERO MARIÑO");
         Console.WriteLine("==============================================");
         Console.WriteLine();
 
-        // Datos inicializados internamente (no ingresados por consola)
-        var transacciones = new[]
+        // Datos inicializados internamente
+        var transactions = new[]
         {
-            new { Usuario = "Juan Pérez", Monto = 150.75m, Descripcion = "Compra de productos electrónicos" },
-            new { Usuario = "María García", Monto = 89.99m, Descripcion = "Suscripción mensual premium" },
-            new { Usuario = "Carlos López", Monto = 5000.00m, Descripcion = "Pago de servicios profesionales" },
-            new { Usuario = "Ana Martínez", Monto = 25.50m, Descripcion = "Compra de libros digitales" },
-            new { Usuario = "Pedro Rodríguez", Monto = 15000.00m, Descripcion = "Pago excesivo para probar límites" }
+            new { User = "Juan Pérez", Amount = 150.75m, Description = "Compra de productos electrónicos" },
+            new { User = "María García", Amount = 89.99m, Description = "Suscripción mensual premium" },
+            new { User = "Carlos López", Amount = 5000.00m, Description = "Pago de servicios profesionales" },
+            new { User = "Ana Martínez", Amount = 25.50m, Description = "Compra de libros digitales" },
+            new { User = "Pedro Rodríguez", Amount = 15000.00m, Description = "Pago excesivo para probar límites" }
         };
 
-        Console.WriteLine("🔄 Procesando transacciones con diferentes métodos de pago y notificaciones...");
+        Console.WriteLine("Procesando transacciones...");
         Console.WriteLine();
 
-        // Ejemplo 1: Pago con tarjeta + notificación por correo
+        // Ejemplos de procesamiento con diferentes combinaciones
         Console.WriteLine("--- TRANSACCIÓN 1: Tarjeta + Correo ---");
-        var pagoTarjeta = new ROMAPagoConTarjeta();
-        var notificadorCorreo = new ROMANotificadorCorreo();
-        var procesador1 = new ROMAProcesadorDePagos(pagoTarjeta, notificadorCorreo);
-        procesador1.ROMAProcesarTransaccion(transacciones[0].Monto, transacciones[0].Usuario, transacciones[0].Descripcion);
+        var creditCardPayment = new CreditCardPayment();
+        var emailNotifier = new EmailNotifier();
+        var processor1 = new PaymentProcessor(creditCardPayment, emailNotifier);
+        processor1.ProcessTransaction(transactions[0].Amount, transactions[0].User, transactions[0].Description);
 
         Console.WriteLine("--- TRANSACCIÓN 2: Transferencia + SMS ---");
-        var pagoTransferencia = new ROMAPagoPorTransferencia();
-        var notificadorSMS = new ROMANotificadorSMS();
-        var procesador2 = new ROMAProcesadorDePagos(pagoTransferencia, notificadorSMS);
-        procesador2.ROMAProcesarTransaccion(transacciones[1].Monto, transacciones[1].Usuario, transacciones[1].Descripcion);
+        var bankTransferPayment = new BankTransferPayment();
+        var smsNotifier = new SmsNotifier();
+        var processor2 = new PaymentProcessor(bankTransferPayment, smsNotifier);
+        processor2.ProcessTransaction(transactions[1].Amount, transactions[1].User, transactions[1].Description);
 
         Console.WriteLine("--- TRANSACCIÓN 3: Transferencia + Correo ---");
-        var procesador3 = new ROMAProcesadorDePagos(pagoTransferencia, notificadorCorreo);
-        procesador3.ROMAProcesarTransaccion(transacciones[2].Monto, transacciones[2].Usuario, transacciones[2].Descripcion);
+        var processor3 = new PaymentProcessor(bankTransferPayment, emailNotifier);
+        processor3.ProcessTransaction(transactions[2].Amount, transactions[2].User, transactions[2].Description);
 
         Console.WriteLine("--- TRANSACCIÓN 4: Tarjeta + SMS ---");
-        var procesador4 = new ROMAProcesadorDePagos(pagoTarjeta, notificadorSMS);
-        procesador4.ROMAProcesarTransaccion(transacciones[3].Monto, transacciones[3].Usuario, transacciones[3].Descripcion);
+        var processor4 = new PaymentProcessor(creditCardPayment, smsNotifier);
+        processor4.ProcessTransaction(transactions[3].Amount, transactions[3].User, transactions[3].Description);
 
         Console.WriteLine("--- TRANSACCIÓN 5: Transferencia con monto excesivo (fallará) ---");
-        var procesador5 = new ROMAProcesadorDePagos(pagoTransferencia, notificadorCorreo);
-        procesador5.ROMAProcesarTransaccion(transacciones[4].Monto, transacciones[4].Usuario, transacciones[4].Descripcion);
+        var processor5 = new PaymentProcessor(bankTransferPayment, emailNotifier);
+        processor5.ProcessTransaction(transactions[4].Amount, transactions[4].User, transactions[4].Description);
 
         Console.WriteLine("==============================================");
-        Console.WriteLine("✨ Demostración de PRINCIPIOS SOLID aplicados:");
-        Console.WriteLine("• Single Responsibility: Cada clase tiene una responsabilidad específica");
-        Console.WriteLine("• Open/Closed: Se pueden agregar nuevos métodos de pago sin modificar código existente");
-        Console.WriteLine("• Liskov Substitution: Las implementaciones son intercambiables");
-        Console.WriteLine("• Interface Segregation: Interfaces específicas para cada funcionalidad");
-        Console.WriteLine("• Dependency Inversion: El procesador depende de abstracciones, no de implementaciones");
-        Console.WriteLine();
-        Console.WriteLine("💡 Inyección de dependencias implementada en el constructor del ROMAProcesadorDePagos");
-        Console.WriteLine("🔧 Nuevos métodos de pago y notificaciones se pueden agregar fácilmente");
-        
+
         Console.WriteLine();
         Console.WriteLine("Presione cualquier tecla para salir...");
         Console.ReadKey();
